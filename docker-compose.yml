@@ -1,8 +1,0 @@
-api:
-  build: .
-  volumes:
-    - ./:/watartu
-  ports:
-    - 5000:5000
-  environment:
-    VIRTUAL_HOST: 'api.whitney.org'
