@@ -1,17 +1,21 @@
-FROM ruby:2.3.0
-MAINTAINER whitneymuseum whitney-api
+FROM python:2.7
+MAINTAINER coopandluke watartu
 
-ENV APP_HOME /vagrant/api
+ENV APP_HOME /watartu
 
-RUN apt-get update && apt-get install -qy mysql-client
-
-RUN mkdir -p $APP_HOME /opt/whitney/lib
-ADD ./Gemfile /opt/whitney/lib/
-ADD ./Gemfile.lock /opt/whitney/lib/
-
-WORKDIR /opt/whitney/lib
-RUN bundle install
-
+RUN apt-get update
 WORKDIR $APP_HOME
-EXPOSE 4000
-CMD /bin/bash -c "rm tmp/pids/server.pid; bundle exec rake db:create db:migrate; rails s -p 4000 -b '0.0.0.0'"
+ADD install.sh ./install.sh
+ADD opencv-2.4.11.zip ./opencv-2.4.11.zip
+RUN ./install.sh
+
+# RUN mkdir -p $APP_HOME /opt/whitney/lib
+# ADD ./Gemfile /opt/whitney/lib/
+# ADD ./Gemfile.lock /opt/whitney/lib/
+# 
+# WORKDIR /opt/whitney/lib
+# RUN bundle install
+# 
+# WORKDIR $APP_HOME
+# EXPOSE 4000
+CMD echo "hi"

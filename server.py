@@ -6,10 +6,10 @@ import glob
 import sys
 import pdb
 app = Flask(__name__)
-app.debug = False
+app.debug = True
 
 def check_everything():
-    MIN_MATCH_COUNT = 10
+    MIN_MATCH_COUNT = 30
     paths = glob.glob('./*.jpg')
     
     #Initiate Flann procedure
@@ -40,16 +40,20 @@ def check_everything():
             if m.distance < 0.7*n.distance:
                 good.append(m)
             if len(good) > MIN_MATCH_COUNT:
-                return paths[ind] 
+                return paths[ind] + (" %d" % len(good))
     return "Not Found"
 
-@app.route("/", methods=['POST'])
+@app.route("/", methods=['GET'])
+def hello():
+        return "Hello world"
+
+@app.route("/submit/", methods=['POST'])
 def getrequest():
         f = open('test/aataco1.jpg','w')
-        f.write(request.get_data())
+        f.write(request.files['webcam'].getvalue())
         f.close()
         thing = str(check_everything())
         return thing
 
 if __name__ == "__main__":
-        app.run()
+        app.run(host='0.0.0.0')
