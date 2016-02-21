@@ -28,8 +28,7 @@ keypoints_test, description_test = orb.detectAndCompute(test_img, None)
 with Timer("creating db"):
     try:
         features, image_to_filename = cPickle.load(open("db.dat"))
-        for f in features:
-            bfs.add((f,))
+        bfs.add(features)
     except Exception, e:
         print e
         image_to_filename = []
@@ -57,5 +56,4 @@ with Timer('tallying'):
 
 
 result = [(image_to_filename[pic], score) for pic, score in which.most_common(10)]
-result.sort(key = lambda x : x[1], reverse=True)
 print result[:10]
