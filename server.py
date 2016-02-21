@@ -1,6 +1,10 @@
 from flask import Flask, request
 import numpy as np
-import cv2
+from skimage import data
+from skimage import io
+from skimage import transform as tf
+from skimage.feature import (match_descriptors, corner_harris,
+                             corner_peaks, ORB, plot_matches)
 import json
 import glob
 import sys
@@ -12,14 +16,8 @@ def check_everything():
     MIN_MATCH_COUNT = 30
     paths = glob.glob('./*.jpg')
     
-    #Initiate Flann procedure
-    FLANN_INDEX_KDTREE = 0
-    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
-    search_params = dict(checks = 50)
-    flann = cv2.FlannBasedMatcher(index_params, search_params)
-    
     # Initiate SIFT detector
-    sift = cv2.SIFT()
+    descriptor_extractor = ORB(n_keypoints=200)
     
     #Read in File
     with open('tempfile') as data_file:
@@ -29,13 +27,15 @@ def check_everything():
             descriptions_reborn[i] = np.asarray(descriptions_reborn[i], dtype=np.float32)
     
     #Check against other images
-    test_img = cv2.imread('test/aataco1.jpg',0)
-    kp, test = sift.detectAndCompute(test_img,None)
+    img = io.imread('test/aataco1.jpg', as_gray=True)
+    descriptor_extractor.detect_and_extract(img,None)
+    main_descriptor = descriptor_extractor.descriptors
     a = 0
     found = False
     for ind,description in enumerate(descriptions_reborn):
         good = []
-        matches = flann.knnMatch(test,description,k=2)
+        matches = match_descriptors(main_descriptor, description, cross_check=True)
+        pdb.set_trace()
         for m,n in matches:
             if m.distance < 0.7*n.distance:
                 good.append(m)
